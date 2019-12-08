@@ -37,14 +37,13 @@ Running for OpenJDK 1.8.0 build 232, Linux 5.3.7.
 
 A [visualization_v1.0.0] is available, summery:
 
-| Framework | Version | Verify (op/s) | Claim (op/s) | Parse (op/s)
-| --------- | ----- |----- | ----- | ----- |
-|[java-jwt] | 3.8.3/0.9.0 | 14.6k | 14.6k | 230.8k |
-|[jjwt] | 0.9.1 | 14.9k | 14.5k | |
-|[Okta JWT Verifier for Java]| 0.4.0 | 0.6k | 0.6k | |
-|[fusionauth-jwt]| 3.1.6 | 15.9k | 15.7k | 581.5k |
+| Framework | Version | Time (s) | 
+| --------- | ----- |----- | 
+|[gson] |  |  |
+|[Jackson]|  |  |
+|[jsoniter]|  | | 
 
-In short, [jsoniter] pregenerated parser is the fastest parser. 
+In short, [jsoniter] pregenerated parser is the fastest parser. However it is imature.
 
 
 # History
