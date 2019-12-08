@@ -1,0 +1,24 @@
+jmh {
+    include = ".*"
+}
+
+dependencies {
+    jmh project(":frameworks:gson-bench")
+    jmh project(":frameworks:jackson-bench")
+    jmh project(":frameworks:jsoniter-bench")
+}
+
+// for some reason is embedding resources not panning out
+task copyData(type: Copy) {
+    from "src/jmh/resources"
+    into System.getProperty("user.home") + "/.gradle/workers/data/nve"
+}
+
+build.finalizedBy(copyData)
+
+task deleteData(type: Delete) {
+    delete fileTree(System.getProperty("user.home") + "/.gradle/workers/data/nve") {
+        include '**/*.gz'
+    }
+    mustRunAfter('jmh')
+}

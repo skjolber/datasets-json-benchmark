@@ -1,0 +1,8 @@
+dependencies {
+    compile project(":jmh-utils")
+    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    compile("com.fasterxml.jackson.module:jackson-module-afterburner:${jacksonVersion}")
+    
+}
+
+

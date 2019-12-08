@@ -1,0 +1,31 @@
+dependencies {
+	compile project(":jmh-utils")
+	compile("com.dslplatform:dsl-json:${dslJsonVersion}")
+    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+	
+    annotationProcessor("com.dslplatform:dsl-json-java8:${dslJsonVersion}")
+    
+       //just satisfy Jsonb provided dependency
+    //api 'javax.json.bind:javax.json.bind-api:1.0' 
+}
+/*
+compileJava {
+    options.warnings = false
+    options.deprecation = false
+    options.compilerArgs += ["-Ddsljson.jackson=true"]
+}
+
+
+compileJava.dependsOn(jsoniterStaticCodgen)
+
+task jsoniterStaticCodgen(type:JavaExec) {
+    classpath configurations.getByName(android.sourceSets.main.compileConfigurationName)
+    classpath project.buildDir.toString() + '/intermediates/classes/release'
+    classpath project.buildDir.toString() + '/intermediates/classes/debug'
+    main = 'com.jsoniter.static_codegen.StaticCodegen'
+    args 'com.example.myapplication.DemoCodegenConfig'
+    workingDir = android.sourceSets.main.java.srcDirs[0].toString()
+    standardOutput = System.out
+    errorOutput = System.err
+}
+*/

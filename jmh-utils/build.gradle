@@ -1,0 +1,5 @@
+dependencies {
+    compile("org.openjdk.jmh:jmh-core:${jmhVersion}")
+    compile("commons-io:commons-io:${commonsIoVersion}")
+}
+
