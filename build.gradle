@@ -63,12 +63,11 @@ configure(project(':jmh-benchmark')) {
     jmh {
         resultFormat = 'JSON'
         
-        warmup = '1s' // Time to spend at each warmup iteration.
-        warmupIterations = 1
+        warmupForks = 0
         
         fork = 1
         timeOnIteration = '20s'
-        iterations = 5
+        iterations = 1
         benchmarkMode = ['SingleShotTime']
         timeUnit = 'ms'
         jvmArgs = ['-XX:+UseG1GC']
