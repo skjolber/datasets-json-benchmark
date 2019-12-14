@@ -1,5 +1,8 @@
 dependencies {
     compile("org.openjdk.jmh:jmh-core:${jmhVersion}")
     compile("commons-io:commons-io:${commonsIoVersion}")
+    compile("org.owasp:dependency-check-core:5.2.4")
+	compile("com.hankcs:aho-corasick-double-array-trie:1.2.1")
+    
 }
 

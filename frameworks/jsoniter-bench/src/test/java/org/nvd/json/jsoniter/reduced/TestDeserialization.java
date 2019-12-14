@@ -60,7 +60,6 @@ public class TestDeserialization {
 		iter.close();
 	}
 	
-	
 	@Test
 	@Disabled
 	public void testIteratorGz() throws IOException {

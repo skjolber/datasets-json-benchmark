@@ -14,6 +14,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.github.skjolber.nve.jackson.FullParser;
+import com.github.skjolber.nve.jackson.ReducedParser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
@@ -26,7 +29,7 @@ import com.jsoniter.spi.DecodingMode;
 public class JsonParseBenchmark {
 
 	@Benchmark
-    public int gson_parse_full(BenchmarkState state) throws Exception {
+    public int gson_parse_full(DatabindingBenchmarkState state) throws Exception {
 		int count = 0;
 		
 		List<byte[]> contents = state.getContents();
@@ -58,7 +61,7 @@ public class JsonParseBenchmark {
     }
 
 	@Benchmark
-    public int gson_parse_reduced(BenchmarkState state) throws Exception {
+    public int gson_parse_reduced(DatabindingBenchmarkState state) throws Exception {
 		int count = 0;
 		
 		List<byte[]> contents = state.getContents();
@@ -90,107 +93,49 @@ public class JsonParseBenchmark {
     }
 
 	@Benchmark
-    public int jackson_parse_full(BenchmarkState state) {
-
-		int count = 0;
-		
-		List<byte[]> contents = state.getContents();
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		ObjectReader readerFor = objectMapper.readerFor(org.nvd.json.jackson.DefCveItem.class);
-
-		JsonFactory factory = objectMapper.getFactory();
-		
-		for(byte[] content : contents) {
-			try (InputStream in  = new ByteArrayInputStream(content);
-					JsonParser parser  = factory.createParser(in)) {
-
-				com.fasterxml.jackson.core.JsonToken nextToken = parser.nextToken();
-				if(nextToken != com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
-					throw new RuntimeException();
-				}
-
-				do {
-					nextToken = parser.nextToken();
-					if(nextToken == null) {
-						break;
-					}
-
-					if(nextToken.isStructStart()) {
-						if(nextToken != com.fasterxml.jackson.core.JsonToken.START_ARRAY) {
-							
-							while(parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
-								org.nvd.json.jackson.DefCveItem cve = readerFor.readValue(parser);
-				                if(cve != null) {
-				                	count += cve.getCve().getReferences().getReferenceData().size();
-				                }
-							}
-						} else {
-							parser.skipChildren();
-						}
-					}
-				} while(true);
-	        } catch (Exception ex) {
-	        	throw new RuntimeException(ex);
-	        }		
-		}
-		
-		return count;
+    public int jackson_parse_full(DatabindingBenchmarkState state) {
+		return FullParser.count(state.getContents());
     }
 
 	@Benchmark
-    public int jackson_parse_reduced(BenchmarkState state) {
-        JsonIterator.setMode(DecodingMode.DYNAMIC_MODE_AND_MATCH_FIELD_STRICTLY);
-    
-		int count = 0;
-		
-		List<byte[]> contents = state.getContents();
-
-		ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		ObjectReader readerFor = objectMapper.readerFor(org.nvd.json.jsoniter.reduced.DefCveItem.class);
-
-		JsonFactory factory = objectMapper.getFactory();
-		
-		for(byte[] content : contents) {
-			try (InputStream in  = new ByteArrayInputStream(content);
-					JsonParser parser  = factory.createParser(in)) {
-
-				com.fasterxml.jackson.core.JsonToken nextToken = parser.nextToken();
-				if(nextToken != com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
-					throw new RuntimeException();
-				}
-
-				do {
-					nextToken = parser.nextToken();
-					if(nextToken == null) {
-						break;
-					}
-						
-					if(nextToken.isStructStart()) {
-						if(nextToken != com.fasterxml.jackson.core.JsonToken.START_ARRAY) {
-							
-							while(parser.nextToken() == com.fasterxml.jackson.core.JsonToken.START_OBJECT) {
-								org.nvd.json.jackson.reduced.DefCveItem cve = readerFor.readValue(parser);
-				                if(cve != null) {
-				                	count += cve.getCve().getReferences().getReferenceData().size();
-				                }
-							}
-						} else {
-							parser.skipChildren();
-						}
-					}
-				} while(true);
-	        } catch (Exception ex) {
-	        	throw new RuntimeException(ex);
-	        }		
-		}
-		
-		return count;
-		
+    public int jackson_parse_reduced(DatabindingBenchmarkState state) {
+		return ReducedParser.count(state.getContents());
     }
 	
 	@Benchmark
-    public int jsoniter_parse_reduced(BenchmarkState state) throws IOException {
+    public int jsoniter_parse_reduced(DatabindingBenchmarkState state) throws IOException {
+		
+		int count = 0;
+		
+		List<byte[]> contents = state.getContents();
+
+		for(byte[] content : contents) {
+			try (JsonIterator iter = JsonIterator.parse(content)) {
+				for (String field = iter.readObject(); field != null; field = iter.readObject()) {
+			        switch (field) {
+			            case "CVE_Items":
+			                while (iter.readArray()) {
+			                	
+			                	org.nvd.json.jsoniter.reduced.DefCveItem cve = iter.read(org.nvd.json.jsoniter.reduced.DefCveItem.class);
+			                    
+				                if(cve != null) {
+				                	count += cve.getCve().getReferences().getReferenceData().size();
+				                }
+			                    
+			                    count ++;
+			                }
+			                break;
+			            default:
+			                iter.skip();
+			        }
+			    }
+			}
+		}
+		return count;
+	}
+	
+	@Benchmark
+    public int jsoniter_parse_reduced_precompiled(DatabindingBenchmarkState state) throws IOException {
 		
 		new DemoCodegenConfig().setup();
 
@@ -224,7 +169,7 @@ public class JsonParseBenchmark {
 	}
 
 	@Benchmark
-    public int jsoniter_parse_full(BenchmarkState state) throws IOException {
+    public int jsoniter_parse_full(DatabindingBenchmarkState state) throws IOException {
 		int count = 0;
 		
 		List<byte[]> contents = state.getContents();

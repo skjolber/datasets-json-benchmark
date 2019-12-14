@@ -6,6 +6,7 @@ dependencies {
     jmh project(":frameworks:gson-bench")
     jmh project(":frameworks:jackson-bench")
     jmh project(":frameworks:jsoniter-bench")
+
 }
 
 // for some reason is embedding resources not panning out

@@ -16,10 +16,8 @@ import org.openjdk.jmh.annotations.State;
 import com.github.skjolber.bench.utils.GZipUtility;
 
 @State(Scope.Thread)
-public class BenchmarkState {
+public class DatabindingBenchmarkState {
 
-	private static final String resource = "/cve%d.json.gz";
-	
 	private File directory = new File("data/nve");
 	
 	private List<byte[]> contents;

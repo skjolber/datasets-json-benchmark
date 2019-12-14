@@ -71,6 +71,8 @@ configure(project(':jmh-benchmark')) {
         benchmarkMode = ['SingleShotTime']
         timeUnit = 'ms'
         jvmArgs = ['-XX:+UseG1GC']
+        
+		duplicateClassesStrategy = 'warn'
     }
     
     jmhReport {
