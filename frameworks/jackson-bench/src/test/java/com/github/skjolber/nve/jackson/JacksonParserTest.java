@@ -20,8 +20,8 @@ public class JacksonParserTest {
 		Map<File, byte[]> bytes = utilitiy.toBytes(inputDirectory);
 		
 		List<byte[]> list = bytes.values().stream().collect(Collectors.toList());
-		int full = FullJacksonParser.countDefCveItem(list);
-		int reduced = ReducedJacksonParser.countDefCveItem(list);
+		long full = FullJacksonParser.countDefCveItem(list);
+		long reduced = ReducedJacksonParser.countDefCveItem(list);
 		
 		assertEquals(full, 579486);
 		assertEquals(full, reduced);

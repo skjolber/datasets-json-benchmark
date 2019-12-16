@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 
@@ -29,37 +30,41 @@ public class EcoSystemBenchmark {
 	@Benchmark
     public long ahoCorasickDoubleArrayTrie(EcoSystemBenchmarkState state) throws Exception {
 		// Collect test data set
-        AhoCorasickDoubleArrayTrie<String> exact = EcoSystemGenerator.getDescriptionSearch();
+		ReturnResultAhoCorasickDoubleArrayTrie<String> exact = EcoSystemGenerator.getDescriptionSearch();
 		
-        long[] result = new long[] {0};
+        long count = 0;
+        long miss = 0;
+        long java = 0;
         
 		List<String> content = state.getContent();
 		
 		for(String multicase : content) {
 			String c = multicase.toLowerCase();
 			
-			exact.parseText(c, (begin, end, value) -> {
+			String result = exact.parseTextForResult(c, (begin, end, value) -> {
             	if(c.charAt(begin) == '.') {
 	            	if(c.length() == end || !Character.isLetterOrDigit(c.charAt(end))) {
-	            		result[0]++;
-	            		
 	                    return false;
 	            	}
 	            	return true;
             	} else {
             		if("buffer overflow" == value) {
-            			if(StringUtils.containsIgnoreCase(c, "android")) {
+            			if(StringUtils.contains(c, "android")) {
             				return true;
             			}
             		}
             	}
-        		result[0]++;
-
                 return false;
 		            
-		        }
-			);
-			
+		    });
+			if(result != null) {
+				if(result == JarAnalyzer.DEPENDENCY_ECOSYSTEM) {
+					java++;
+				}
+				count++;
+			} else {
+				miss++;
+			}
 			/*
 			String ecosystem = determineBaseEcosystem(c);
 			if(ecosystem != null && result[0] == before) {
@@ -69,8 +74,9 @@ public class EcoSystemBenchmark {
 			}
 			*/
 		}
-		System.out.println("New got " + result[0]);
-		return result[0];
+		System.out.println("Hits " + count + " and misses " + miss);
+		System.out.println("Java " + java);
+		return count;
 	}
 
 	

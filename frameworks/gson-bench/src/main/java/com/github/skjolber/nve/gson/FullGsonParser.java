@@ -8,7 +8,7 @@ public class FullGsonParser {
 
     public static long countDefCveItem(List<byte[]> contents) throws IOException {
 
-		int count = 0;
+    	long count = 0;
 		
 		for(byte[] content : contents) {
 			try (GsonParser<org.nvd.json.gson.DefCveItem> reader = new GsonParser<>(content, org.nvd.json.gson.DefCveItem.class)) {

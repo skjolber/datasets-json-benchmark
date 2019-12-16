@@ -9,9 +9,9 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 public class FullJacksonParser {
 
-    public static int countDefCveItem(List<byte[]> contents) throws IOException {
+    public static long countDefCveItem(List<byte[]> contents) throws IOException {
 
-		int count = 0;
+    	long count = 0;
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new AfterburnerModule());

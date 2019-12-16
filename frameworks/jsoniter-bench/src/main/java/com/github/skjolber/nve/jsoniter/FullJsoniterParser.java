@@ -8,9 +8,9 @@ import com.jsoniter.JsonIterator;
 
 public class FullJsoniterParser {
 
-    public static int countDefCveItem(List<byte[]> contents) throws IOException {
+    public static long countDefCveItem(List<byte[]> contents) throws IOException {
 
-		int count = 0;
+    	long count = 0;
 		
 		for(byte[] content : contents) {
 			try (JsonIterator iter = JsonIterator.parse(content)) {

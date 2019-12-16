@@ -19,9 +19,9 @@ public class JsoniterParserTest {
 		Map<File, byte[]> bytes = utilitiy.toBytes(inputDirectory);
 		
 		List<byte[]> list = bytes.values().stream().collect(Collectors.toList());
-		int full = FullJsoniterParser.countDefCveItem(list);
-		int reduced = ReducedJsoniterParser.countDefCveItem(list);
-		int precompiled = PrecompileJsoniterParser.countDefCveItem(list);
+		long full = FullJsoniterParser.countDefCveItem(list);
+		long reduced = ReducedJsoniterParser.countDefCveItem(list);
+		long precompiled = PrecompileJsoniterParser.countDefCveItem(list);
 		
 		assertEquals(full, 579486);
 		assertEquals(full, reduced);

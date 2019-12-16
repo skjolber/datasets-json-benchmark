@@ -10,9 +10,9 @@ import com.jsoniter.JsonIterator;
 
 public class PrecompileJsoniterParser {
 
-    public static int countDefCveItem(List<byte[]> contents) throws IOException {
+    public static long countDefCveItem(List<byte[]> contents) throws IOException {
 
-		int count = 0;
+    	long count = 0;
 		
 		new DemoCodegenConfig().setup();
 

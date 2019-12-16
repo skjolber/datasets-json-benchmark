@@ -20,8 +20,8 @@ public class GsonParserTest {
 		Map<File, byte[]> bytes = utilitiy.toBytes(inputDirectory);
 		
 		List<byte[]> list = bytes.values().stream().collect(Collectors.toList());
-		int full = FullGsonParser.countDefCveItem(list);
-		int reduced = ReducedGsonParser.countDefCveItem(list);
+		long full = FullGsonParser.countDefCveItem(list);
+		long reduced = ReducedGsonParser.countDefCveItem(list);
 		
 		assertEquals(full, 579486);
 		assertEquals(full, reduced);
