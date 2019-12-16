@@ -29,7 +29,7 @@ public class DatabindingBenchmarkState {
 		File outputDirectory = new File("/tmp/nve");
 		outputDirectory.mkdirs();
 		
-		List<File> files = utility.unpack(directory, outputDirectory);
+		List<File> files = utility.toFiles(directory, outputDirectory);
 		if(files != null && !files.isEmpty()) {
 			contents = new ArrayList<>();
 			for(File file : files) {
@@ -41,21 +41,6 @@ public class DatabindingBenchmarkState {
 		} else {
 			throw new RuntimeException("No files in " + directory.getAbsolutePath());
 		}
-		/*
-		contents = new ArrayList<>();
-		
-		for(int i = 2003; i < 2020; i++) {
-			String format = String.format(resource,  i);
-			System.out.println("Read " + format);
-			
-			try (InputStream fin = getClass().getResourceAsStream(format);
-					InputStream in = new GZIPInputStream(fin);					
-					) {
-				byte[] byteArray = IOUtils.toByteArray(in);
-				contents.add(byteArray);
-			}
-		}
-		*/
 	}
 	
 	public List<byte[]> getContents() {

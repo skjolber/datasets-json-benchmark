@@ -19,11 +19,11 @@ public class TestDeserialization2 {
 	@Test
 	public void testIteratorGz() throws IOException {
 		new DemoCodegenConfig().setup();
-		File file = new File("../../jmh-benchmark/src/jmh/resources/data/nve");
+		File file = new File("../../jmh-benchmark/src/jmh/resources");
 		
 		File outputDirectory = new File("/tmp/nve");
 		GZipUtility utilitiy = new GZipUtility();
-		List<File> unpack = utilitiy.unpack(file, outputDirectory);
+		List<File> unpack = utilitiy.toFiles(file, outputDirectory);
 
 		System.out.println("Unpack " + unpack.size() + " files");
 		for(File f : unpack) {

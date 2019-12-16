@@ -1,10 +1,7 @@
 dependencies {
 	compile project(":jmh-utils")
 	compile("com.jsoniter:jsoniter:${jsoniterVersion}")
-	
-	// https://mvnrepository.com/artifact/org.javassist/javassist
 	compile("org.javassist:javassist:3.26.0-GA")
-	
 }
 
 /*

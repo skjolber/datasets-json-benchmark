@@ -1,4 +1,5 @@
 
+
 [![Build Status](https://travis-ci.org/skjolber/datasets-json-benchmark.svg?branch=master)](https://travis-ci.org/skjolber/datasets-json-benchmark)
 
 # datasets-json-benchmark
@@ -15,7 +16,9 @@ Supported datasets:
   * NVE database
      * Full schema parsing
      * Reduced schema parsing (skipping values not actually in use)
-          * OWASP Dependency Check 
+          * As in fields accessed in OWASP Dependency Check 
+     * Ecosystem classification
+          * As in OWASP Dependency Check 
 
 ## License
 [Apache 2.0]
@@ -40,33 +43,38 @@ The JMH plugin seems to have trouble refreshing the project, so restart the Grad
 ### Java 8
 Running for OpenJDK 1.8.0 build 232, Linux 5.3.14.
 
-A [visualization_v1.0.0-JDK8] is available, summery:
+A [visualization_v1.1.0-JDK8] is available, summery:
 
+#### JSON Parsing:
  * GSON is slowest
- * Jackson is about twice as fast
+ * Jackson is 15-25% faster
  * Joniter is at 30-40% faster than Jackson
  * Reduced schema parsing is faster. 
 
 In short, [jsoniter] pregenerated parser is the fastest parser. However a bug was detected in the stream handling, so the library seems not to have sufficient quality testing / code coverage.
 
+#### Ecosystem search
+The so-called Aho Corasick algorithm is more than 20x faster than the classic String.containsIgnoreCase(..).
+
 ### Java 11
 Running for OpenJDK 11 build 11.0.5+10-LTS, Linux 5.3.14.
 
-A [visualization_v1.0.0-JDK11] is available; same results as above.
+A [visualization_v1.1.0-JDK11] is available; same results as above.
 
  * Jackson does relatively better
  * Performance regressions for the other two
 
 # History
 
+ - 1.1.0: Added ecosystem search. Fixed a bug in the Jackson benchmark.
  - 1.0.0: Initial version
 
 [Apache 2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
 [issue-tracker]: https://github.com/skjolber/datasets-json-benchmark/issues
 [Gradle]: https://gradle.org/
 [JMH]: http://openjdk.java.net/projects/code-tools/jmh/
-[visualization_v1.0.0-JDK11]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.0.0-JDK11/index.html
-[visualization_v1.0.0-JDK8]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.0.0-JDK8/index.html
+[visualization_v1.1.0-JDK11]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.0.0-JDK11/index.html
+[visualization_v1.1.0-JDK8]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.0.0-JDK8/index.html
 [Jsoniter]: https://github.com/json-iterator
 [Jackson]: https://github.com/FasterXML/jackson
 [Gson]: https://github.com/google/gson

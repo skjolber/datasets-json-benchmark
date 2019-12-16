@@ -31,7 +31,7 @@ public class DescriptionGenerator {
 		
 		outputDirectory.mkdirs();
 		
-		List<File> files = utility.unpack(inputDirectory, outputDirectory);
+		List<File> files = utility.toFiles(inputDirectory, outputDirectory);
 		if(files != null && !files.isEmpty()) {
 			for(File file : files) {
 				try (InputStream in = new FileInputStream(file)) {
@@ -80,8 +80,6 @@ public class DescriptionGenerator {
         } catch (Exception ex) {
         	throw new RuntimeException(ex);
         }		
-
-		
 	}
 
 	private void writeDescription(Writer writer, DefCveItem cve) throws IOException {
@@ -92,7 +90,6 @@ public class DescriptionGenerator {
         writer.write(description.replace("\n", "").replace("\r", ""));
         writer.write('\n');
 	}
+
 	
-
-
 }

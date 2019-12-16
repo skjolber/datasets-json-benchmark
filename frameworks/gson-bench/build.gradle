@@ -1,7 +1,6 @@
 dependencies {
 	compile project(":jmh-utils")
     compile("com.google.code.gson:gson:${gsonVersion}")
-    compile project(":jmh-utils")
 }
 
 

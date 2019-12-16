@@ -63,11 +63,11 @@ public class TestDeserialization {
 	@Test
 	@Disabled
 	public void testIteratorGz() throws IOException {
-		File file = new File("../../jmh-benchmark/src/jmh/resources/data/nve");
+		File file = new File("../../jmh-benchmark/src/jmh/resources");
 		System.out.println(file.getCanonicalPath());
 		File outputDirectory = new File("/tmp/nve");
 		GZipUtility utilitiy = new GZipUtility();
-		List<File> unpack = utilitiy.unpack(file, outputDirectory);
+		List<File> unpack = utilitiy.toFiles(file, outputDirectory);
 
 		JsonIterator iterator = new JsonIterator();
 		
