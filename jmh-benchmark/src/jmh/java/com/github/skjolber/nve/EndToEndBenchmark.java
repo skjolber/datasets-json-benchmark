@@ -64,8 +64,6 @@ public class EndToEndBenchmark {
 		ObjectReader objectReader = objectMapper.readerFor(org.nvd.json.jackson.reduced.DefCveItem.class);
 		
         long count = 0;
-        long miss = 0;
-        long java = 0;
         
 		for(byte[] content : state.getContents()) {
 			try (JacksonParser<org.nvd.json.jackson.reduced.DefCveItem> reader = new JacksonParser<>(content, objectReader)) {
@@ -119,22 +117,12 @@ public class EndToEndBenchmark {
 	                }
 	                
 	                if(ecosystem != null) {
-	                	if(ecosystem == JarAnalyzer.DEPENDENCY_ECOSYSTEM) {
-	    					java++;
-	    				}
-	                	count += ecosystem.length();
-	                } else {
-	                	miss++;
+    					count++;
 	                }
 	                
 	            }
 			}
 		}		
-		
-		System.out.println("Hits " + count + " and misses " + miss);
-		System.out.println("Java " + java);
-		
-		
 		return count;
     }
 	

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 
@@ -22,7 +21,6 @@ public class EcoSystemBenchmark {
 				result += 1;
 			}
 		}
-		System.out.println("Classic got " + result);
 
 		return result;
 	}
@@ -33,8 +31,6 @@ public class EcoSystemBenchmark {
 		ReturnResultAhoCorasickDoubleArrayTrie<String> exact = EcoSystemGenerator.getDescriptionSearch();
 		
         long count = 0;
-        long miss = 0;
-        long java = 0;
         
 		List<String> content = state.getContent();
 		
@@ -56,14 +52,11 @@ public class EcoSystemBenchmark {
             	}
                 return false;
 		            
-		    });
+		        }
+			);
+			
 			if(result != null) {
-				if(result == JarAnalyzer.DEPENDENCY_ECOSYSTEM) {
-					java++;
-				}
 				count++;
-			} else {
-				miss++;
 			}
 			/*
 			String ecosystem = determineBaseEcosystem(c);
@@ -74,8 +67,6 @@ public class EcoSystemBenchmark {
 			}
 			*/
 		}
-		System.out.println("Hits " + count + " and misses " + miss);
-		System.out.println("Java " + java);
 		return count;
 	}
 
