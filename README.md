@@ -73,8 +73,8 @@ A [visualization_v1.1.0-JDK11] is available; same results as above.
 [issue-tracker]: https://github.com/skjolber/datasets-json-benchmark/issues
 [Gradle]: https://gradle.org/
 [JMH]: http://openjdk.java.net/projects/code-tools/jmh/
-[visualization_v1.1.0-JDK11]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.0.0-JDK11/index.html
-[visualization_v1.1.0-JDK8]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.0.0-JDK8/index.html
+[visualization_v1.1.0-JDK11]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.1.0-JDK11/index.html
+[visualization_v1.1.0-JDK8]: https://skjolber.github.io/datasets-json-benchmark/jmh_v1.1.0-JDK8/index.html
 [Jsoniter]: https://github.com/json-iterator
 [Jackson]: https://github.com/FasterXML/jackson
 [Gson]: https://github.com/google/gson
