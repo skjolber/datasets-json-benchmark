@@ -1,5 +1,5 @@
 jmh {
-    include = ".*End.*"
+    include = ".*Eco.*"
 }
 
 dependencies {

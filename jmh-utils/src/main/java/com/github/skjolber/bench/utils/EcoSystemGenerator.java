@@ -1,8 +1,7 @@
-package com.github.skjolber.nve.util;
+package com.github.skjolber.bench.utils;
 
-import org.nvd.json.gson.Reference;
-import org.nvd.json.gson.DefCveItem;
-
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +13,8 @@ import org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer;
 import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
 import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
 import org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer;
+
+import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 
 public class EcoSystemGenerator {
 
@@ -91,33 +92,26 @@ public class EcoSystemGenerator {
         return null;
     }
  
-	public static String determineEcoSystem(DefCveItem cve, String description) {
-		String ecosystem = determineBaseEcosystem(description);
-        if (ecosystem == null) {
-            for (Reference r : cve.getCve().getReferences().getReferenceData()) {
-                if (r.getUrl().contains("elixir-security-advisories")) {
-                    ecosystem = "elixir";
-                } else if (r.getUrl().contains("ruby-lang.org")) {
-                    ecosystem = RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM;
-                } else if (r.getUrl().contains("python.org")) {
-                    ecosystem = PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
-                } else if (r.getUrl().contains("drupal.org")) {
-                    ecosystem = PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
-                } else if (r.getUrl().contains("npm")) {
-                    ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-                } else if (r.getUrl().contains("nodejs.org")) {
-                    ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-                } else if (r.getUrl().contains("nodesecurity.io")) {
-                    ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-                }
-            }
-        }
-		return ecosystem;
+	public static String getEcosystemFromReferenceData(String url) {
+		if (url.contains("elixir-security-advisories")) {
+		    return "elixir";
+		} else if (url.contains("ruby-lang.org")) {
+		    return RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM;
+		} else if (url.contains("python.org")) {
+		    return PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
+		} else if (url.contains("drupal.org")) {
+		    return PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
+		} else if (url.contains("npm")) {
+		    return NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+		} else if (url.contains("nodejs.org")) {
+		    return NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+		} else if (url.contains("nodesecurity.io")) {
+		    return NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+		}
+		return null;
 	}    
 	
-
 	public static ReturnResultAhoCorasickDoubleArrayTrie<String> getDescriptionSearch() {
-		TreeMap<String, String> exactMap = new TreeMap<String, String>();
         String[] mappingsArray = new String[] {
                 ".php", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
                 " npm ", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM,
@@ -140,8 +134,9 @@ public class EcoSystemGenerator {
                 "joomla", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
                 "moodle", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
                 "typo3", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
-                
         };
+        
+		TreeMap<String, String> exactMap = new TreeMap<String, String>();
         for(int i = 0; i < mappingsArray.length; i += 2) {
             exactMap.put(mappingsArray[i], mappingsArray[i + 1]);
         }
@@ -171,4 +166,52 @@ public class EcoSystemGenerator {
 		return exact;
 	}	
 	
+	public static AhoCorasickDoubleArrayTrie<Integer> getDescriptionSearchByIndex(List<String> indexes) {
+		
+        String[] mappingsArray = new String[] {
+                ".php", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
+                " npm ", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM,
+                " node.js", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM,
+                ".pm", "perl",
+                ".pl", "perl",
+                ".java", JarAnalyzer.DEPENDENCY_ECOSYSTEM,
+                ".jsp", JarAnalyzer.DEPENDENCY_ECOSYSTEM,
+                " grails ", JarAnalyzer.DEPENDENCY_ECOSYSTEM,
+                ".rb", RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "ruby gem", RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM,
+                ".py", PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "django", PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "buffer overflow", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,
+                ".cpp", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,
+                ".c", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,
+                ".h", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "wordpress", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "drupal", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "joomla", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "moodle", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
+                "typo3", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM,
+        };
+        
+		TreeMap<String, Integer> exactMap = new TreeMap<String, Integer>();
+        for(int i = 0; i < mappingsArray.length; i += 2) {
+            exactMap.put(mappingsArray[i], indexes.indexOf(mappingsArray[i + 1]));
+        }
+        // Build an AhoCorasickDoubleArrayTrie
+        AhoCorasickDoubleArrayTrie<Integer> exact = new AhoCorasickDoubleArrayTrie<>();
+        exact.build(exactMap);
+		return exact;
+	}	
+	
+	public static void add(String key, Map<String, Long> map) {
+		if(key == null) {
+			key = "-";
+		}
+		Long frequency = map.get(key);
+		if(frequency == null) {
+			frequency = 1L;
+		} else {
+			frequency++;
+		}
+		map.put(key, frequency);		
+	}
 }

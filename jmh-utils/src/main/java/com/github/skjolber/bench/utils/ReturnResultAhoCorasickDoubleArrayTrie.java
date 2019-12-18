@@ -1,4 +1,4 @@
-package com.github.skjolber.nve.util;
+package com.github.skjolber.bench.utils;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 

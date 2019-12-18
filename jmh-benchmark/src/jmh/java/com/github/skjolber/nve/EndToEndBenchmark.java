@@ -1,7 +1,9 @@
 package com.github.skjolber.nve;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,15 +12,19 @@ import org.nvd.json.jackson.reduced.Reference;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
+import org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer;
+import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
+import org.owasp.dependencycheck.analyzer.RubyGemspecAnalyzer;
+import static com.github.skjolber.bench.utils.EcoSystemGenerator.*;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.github.skjolber.bench.utils.EcoSystemGenerator;
+import com.github.skjolber.bench.utils.ReturnResultAhoCorasickDoubleArrayTrie;
 import com.github.skjolber.nve.gson.GsonParser;
 import com.github.skjolber.nve.jackson.JacksonParser;
-import com.github.skjolber.nve.util.EcoSystemGenerator;
-import com.github.skjolber.nve.util.ReturnResultAhoCorasickDoubleArrayTrie;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -26,7 +32,8 @@ public class EndToEndBenchmark {
 
 	@Benchmark
     public long gson_v524(DatabindingBenchmarkState state) throws Exception {
-		
+		Map<String, Long> map = new HashMap<>();
+
 		Gson gson = new GsonBuilder().create();
 
         long count = 0;
@@ -40,21 +47,41 @@ public class EndToEndBenchmark {
 		                    -> "en".equals(desc.getLang())).map(d
 		                    -> d.getValue()).collect(Collectors.joining(" "));
 	                
-	                String ecosystem = EcoSystemGenerator.determineEcoSystem(cve, description);
+	                String ecosystem = EcoSystemGenerator.determineBaseEcosystem(description);
 	                
-	                if(ecosystem != null) {
-	                	count += ecosystem.length();
+	                if (ecosystem == null) {
+	                    for (org.nvd.json.gson.Reference r : cve.getCve().getReferences().getReferenceData()) {
+	                        if (r.getUrl().contains("elixir-security-advisories")) {
+	                            ecosystem = "elixir";
+	                        } else if (r.getUrl().contains("ruby-lang.org")) {
+	                            ecosystem = RubyGemspecAnalyzer.DEPENDENCY_ECOSYSTEM;
+	                        } else if (r.getUrl().contains("python.org")) {
+	                            ecosystem = PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
+	                        } else if (r.getUrl().contains("drupal.org")) {
+	                            ecosystem = PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM;
+	                        } else if (r.getUrl().contains("npm")) {
+	                            ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+	                        } else if (r.getUrl().contains("nodejs.org")) {
+	                            ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+	                        } else if (r.getUrl().contains("nodesecurity.io")) {
+	                            ecosystem = NodeAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+	                        }
+	                    }
 	                }
+	                add(ecosystem, map);
+                	count++;
 	            }
 			}
 		}
-		
+		System.out.println(map + " for count " + count);
+
 		return count;
     }
 
 	@Benchmark
     public long jackson_reduced_aho_corasick(DatabindingBenchmarkState state) throws IOException {
-		
+		Map<String, Long> map = new HashMap<>();
+
 		ReturnResultAhoCorasickDoubleArrayTrie<String> descriptionSearch = EcoSystemGenerator.getDescriptionSearch();
 		ReturnResultAhoCorasickDoubleArrayTrie<String> referenceDataSearch = EcoSystemGenerator.getReferenceData();
 		
@@ -116,13 +143,12 @@ public class EndToEndBenchmark {
 	                    }	                	
 	                }
 	                
-	                if(ecosystem != null) {
-    					count++;
-	                }
-	                
+	                add(ecosystem, map);
+                	count++;
 	            }
 			}
-		}		
+		}
+		System.out.println(map + " for count " + count);
 		return count;
     }
 	
