@@ -16,7 +16,7 @@ import org.openjdk.jmh.annotations.State;
 public class EcoSystemBenchmarkState {
 
 	private File directory = new File("data/nve");
-	
+
 	private List<String> content;
 
 	@Setup(Level.Trial)
@@ -35,11 +35,11 @@ public class EcoSystemBenchmarkState {
 			throw new RuntimeException();
 		}
 	}
-	
+
 	public List<String> getContent() {
 		return content;
 	}
 
 }
 
-	
+

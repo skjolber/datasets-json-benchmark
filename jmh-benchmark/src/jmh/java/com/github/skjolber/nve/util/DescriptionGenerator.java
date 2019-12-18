@@ -25,25 +25,25 @@ public class DescriptionGenerator {
 		GZipUtility utility = new GZipUtility();
 
 		File outputDirectory = new File("/tmp/nve");
-		
+
 		FileOutputStream fout = new FileOutputStream(outputFile);
 		Writer writer = new OutputStreamWriter(fout, StandardCharsets.UTF_8);
-		
+
 		outputDirectory.mkdirs();
-		
+
 		List<File> files = utility.toFiles(inputDirectory, outputDirectory);
 		if(files != null && !files.isEmpty()) {
 			for(File file : files) {
 				try (InputStream in = new FileInputStream(file)) {
 					System.out.println("Parse file " + file + " size " + file.length() / (1024 * 1024) + "MB");
-					
+
 					parse(in, writer);
 				}
 			}
 		} else {
 			throw new RuntimeException("No files in " + inputDirectory.getAbsolutePath());
 		}
-		
+
 		writer.close();
 	}
 
@@ -77,19 +77,19 @@ public class DescriptionGenerator {
 					}
 				}
 			} while(true);
-        } catch (Exception ex) {
-        	throw new RuntimeException(ex);
-        }		
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}		
 	}
 
 	private void writeDescription(Writer writer, DefCveItem cve) throws IOException {
-        final String description = cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
-                -> "en".equals(desc.getLang())).map(d
-                -> d.getValue()).collect(Collectors.joining(" "));
-        
-        writer.write(description.replace("\n", "").replace("\r", ""));
-        writer.write('\n');
+		final String description = cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
+				-> "en".equals(desc.getLang())).map(d
+						-> d.getValue()).collect(Collectors.joining(" "));
+
+		writer.write(description.replace("\n", "").replace("\r", ""));
+		writer.write('\n');
 	}
 
-	
+
 }

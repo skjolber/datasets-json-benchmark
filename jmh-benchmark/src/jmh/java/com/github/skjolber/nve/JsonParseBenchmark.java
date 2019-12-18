@@ -15,37 +15,37 @@ import com.github.skjolber.nve.jsoniter.ReducedJsoniterParser;
 public class JsonParseBenchmark {
 
 	@Benchmark
-    public long gson_parse_full(DatabindingBenchmarkState state) throws Exception {
+	public long gson_parse_full(DatabindingBenchmarkState state) throws Exception {
 		return FullGsonParser.countDefCveItem(state.getContents());
-    }
+	}
 
 	@Benchmark
-    public long gson_parse_reduced(DatabindingBenchmarkState state) throws Exception {
+	public long gson_parse_reduced(DatabindingBenchmarkState state) throws Exception {
 		return ReducedGsonParser.countDefCveItem(state.getContents());
-    }
+	}
 
 	@Benchmark
-    public long jackson_parse_full(DatabindingBenchmarkState state) throws IOException {
+	public long jackson_parse_full(DatabindingBenchmarkState state) throws IOException {
 		return FullJacksonParser.countDefCveItem(state.getContents());
-    }
+	}
 
 	@Benchmark
-    public long jackson_parse_reduced(DatabindingBenchmarkState state) throws IOException {
+	public long jackson_parse_reduced(DatabindingBenchmarkState state) throws IOException {
 		return ReducedJacksonParser.countDefCveItem(state.getContents());
-    }
-	
+	}
+
 	@Benchmark
-    public long jsoniter_parse_reduced(DatabindingBenchmarkState state) throws IOException {
+	public long jsoniter_parse_reduced(DatabindingBenchmarkState state) throws IOException {
 		return ReducedJsoniterParser.countDefCveItem(state.getContents());
 	}
-	
+
 	@Benchmark
-    public long jsoniter_parse_reduced_precompiled(DatabindingBenchmarkState state) throws IOException {
+	public long jsoniter_parse_reduced_precompiled(DatabindingBenchmarkState state) throws IOException {
 		return PrecompileJsoniterParser.countDefCveItem(state.getContents());
 	}
 
 	@Benchmark
-    public long jsoniter_parse_full(DatabindingBenchmarkState state) throws IOException {
+	public long jsoniter_parse_full(DatabindingBenchmarkState state) throws IOException {
 		return FullJsoniterParser.countDefCveItem(state.getContents());
 	}	
 }

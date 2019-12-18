@@ -19,16 +19,16 @@ import com.github.skjolber.bench.utils.GZipUtility;
 public class DatabindingBenchmarkState {
 
 	private File directory = new File("data/nve");
-	
+
 	private List<byte[]> contents;
-	
+
 	@Setup(Level.Trial)
 	public void init() throws Exception {
 		GZipUtility utility = new GZipUtility();
-		
+
 		File outputDirectory = new File("/tmp/nve");
 		outputDirectory.mkdirs();
-		
+
 		List<File> files = utility.toFiles(directory, outputDirectory);
 		if(files != null && !files.isEmpty()) {
 			contents = new ArrayList<>();
@@ -42,7 +42,7 @@ public class DatabindingBenchmarkState {
 			throw new RuntimeException("No files in " + directory.getAbsolutePath());
 		}
 	}
-	
+
 	public List<byte[]> getContents() {
 		return contents;
 	}
