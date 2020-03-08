@@ -15,7 +15,7 @@ task copyData(type: Copy) {
     into System.getProperty("user.home") + "/.gradle/workers/data/nve"
 }
 
-build.finalizedBy(copyData)
+jmhClasses.finalizedBy(copyData)
 
 task deleteData(type: Delete) {
     delete fileTree(System.getProperty("user.home") + "/.gradle/workers/data/nve") {

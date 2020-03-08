@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
@@ -21,6 +23,11 @@ public class EcoSystemBenchmarkState {
 
 	@Setup(Level.Trial)
 	public void setup() throws Exception {
+		if(!directory.exists()) {
+			if(!directory.mkdirs()) {
+				throw new RuntimeException();
+			}
+		}
 		File descriptions = new File(directory, "descriptions.txt");
 		if(!descriptions.exists() || descriptions.length() == 0) {
 			DescriptionGenerator generator = new DescriptionGenerator();

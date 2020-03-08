@@ -31,7 +31,6 @@ public class EcoSystemBenchmark {
 			add(result, map);			
 			count++;
 		}
-		System.out.println(map + " for count " + count);
 		return count;
 	}
 
@@ -76,7 +75,6 @@ public class EcoSystemBenchmark {
 			add(result, map);
 			count++;
 		}
-		System.out.println(map + " for count " + count);
 		return count;
 	}
 
@@ -150,7 +148,6 @@ public class EcoSystemBenchmark {
 			count++;
 
 		}
-		System.out.println(map + " for count " + count);
 		return count;
 	}
 
