@@ -1,1 +1,1 @@
-include 'jmh-utils', 'frameworks:gson-bench', 'frameworks:dsljson-bench', 'frameworks:jackson-bench', 'frameworks:jsoniter-bench', 'jmh-benchmark'
+include 'jmh-utils', 'frameworks:gson-bench', 'frameworks:dsljson-bench', 'frameworks:jackson-bench', 'frameworks:jsoniter-bench', 'jmh-benchmark', 'frameworks:ecosystem-bench'
