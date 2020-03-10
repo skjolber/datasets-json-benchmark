@@ -1,4 +1,4 @@
-package com.github.skjolber.nve.util;
+package com.github.skjolber.nve.jackson;
 
 import java.io.File;
 import java.io.FileInputStream;

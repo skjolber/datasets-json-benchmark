@@ -19,6 +19,12 @@ public class EcosystemMappingsComparator {
 	public EcosystemMappingsComparator(File outputDirectory) {
 		super();
 		this.outputDirectory = outputDirectory;
+		
+		if(!outputDirectory.exists()) {
+			if(!outputDirectory.mkdirs()) {
+				throw new RuntimeException();
+			}
+		}
 	}
 
 	public void compare(File f1, File f2) throws IOException {

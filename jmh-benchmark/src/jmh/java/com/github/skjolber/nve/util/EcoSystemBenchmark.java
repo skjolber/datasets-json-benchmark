@@ -129,20 +129,22 @@ public class EcoSystemBenchmark {
 				}
 				score[value]++;
 			});
-
+			
 			int best = -1;
+			int bestScore = -1;
 			for(int i = 0; i < score.length; i++) {
 				if(score[i] > 0) {
-					add(systems.get(i), map);
-
-					if(best == -1 || score[i] > score[best]) {
+					if(score[i] > bestScore) {
 						best = i;
+						bestScore = score[i];
 					}
 					score[i] = 0;
 				}
 			}
 
-			if(best == -1) {
+			if(best != -1) {
+				add(systems.get(best), map);
+			} else {
 				add(null, map);
 			}
 			count++;
