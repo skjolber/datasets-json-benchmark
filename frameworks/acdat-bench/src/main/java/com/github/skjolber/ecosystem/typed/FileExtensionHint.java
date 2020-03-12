@@ -1,4 +1,4 @@
-package com.github.skjolber.bench.utils;
+package com.github.skjolber.ecosystem.typed;
 
 import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
 import org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer;

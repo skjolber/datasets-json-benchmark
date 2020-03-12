@@ -1,4 +1,4 @@
-package com.github.skjolber.bench.utils;
+package com.github.skjolber.ecosystem.typed;
 
 import org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer;
 import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
@@ -7,8 +7,9 @@ import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
 import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
 
-public enum KeywordHint implements EcosystemHint{
+public enum KeywordHint implements EcosystemHint {
 
+	// note: all must be lowercase
     NPM(" npm ", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
 	NODEJS(" node.js", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
     GRAILS(" grails ", JarAnalyzer.DEPENDENCY_ECOSYSTEM),
@@ -19,7 +20,8 @@ public enum KeywordHint implements EcosystemHint{
     DRUPAL("drupal", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     JOOMLA("joomla", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     MOODLE("moodle", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
-    TYPO3("typo3", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM);
+    TYPO3("typo3", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
+    JAVA_SE("java se", JarAnalyzer.DEPENDENCY_ECOSYSTEM);
             
     private final String keyword;
     
