@@ -31,7 +31,12 @@ public class JsonParseBenchmark {
 
 	@Benchmark
 	public long jackson_parse_reduced(DatabindingBenchmarkState state) throws IOException {
-		return ReducedJacksonParser.countDefCveItem(state.getContents());
+		return ReducedJacksonParser.countDefCveItem(state.getContents(), false);
+	}
+
+	@Benchmark
+	public long jackson_parse_reduced_custom(DatabindingBenchmarkState state) throws IOException {
+		return ReducedJacksonParser.countDefCveItem(state.getContents(), false);
 	}
 
 	@Benchmark

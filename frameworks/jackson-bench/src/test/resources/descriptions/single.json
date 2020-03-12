@@ -1,0 +1,12 @@
+{
+	"description_data": [
+		{
+			"lang": "en",
+			"value": "This is the description we want"
+		},
+		{
+			"lang": "no",
+			"value": "Ignore this description"
+		}
+	]
+}

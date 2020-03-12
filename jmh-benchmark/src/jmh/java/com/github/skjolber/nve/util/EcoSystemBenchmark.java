@@ -15,7 +15,7 @@ import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
 import static com.github.skjolber.bench.utils.EcoSystemGenerator.*;
 import com.github.skjolber.bench.utils.EcoSystemGenerator;
 import com.github.skjolber.bench.utils.ReturnResultAhoCorasickDoubleArrayTrie;
-import com.github.skjolber.ecosystem.typed.BaseEcosystemMapper;
+import com.github.skjolber.ecosystem.hint.description.DescriptionEcosystemMapper;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 
 public class EcoSystemBenchmark {
@@ -82,7 +82,7 @@ public class EcoSystemBenchmark {
 	@Benchmark
 	public long scoring_ahoCorasickDoubleArrayTrie(EcoSystemBenchmarkState state) throws Exception {
 		// Collect test data set
-		BaseEcosystemMapper mapper = new BaseEcosystemMapper();
+		DescriptionEcosystemMapper mapper = new DescriptionEcosystemMapper();
 
 		long count = 0;
 

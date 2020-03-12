@@ -1,10 +1,13 @@
-package com.github.skjolber.ecosystem.typed;
+package com.github.skjolber.ecosystem.hint.description;
 
 import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
 import org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
 import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
+
+import com.github.skjolber.ecosystem.hint.EcosystemHint;
+import com.github.skjolber.ecosystem.hint.EcosystemHintNature;
 
 public enum FileExtensionHint implements EcosystemHint {
 

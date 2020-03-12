@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.skjolber.bench.utils.EcoSystemGenerator;
-import com.github.skjolber.ecosystem.typed.BaseEcosystemMapper;
+import com.github.skjolber.ecosystem.hint.description.DescriptionEcosystemMapper;
 import com.github.skjolber.nve.jackson.DescriptionGenerator;
 
-public class Generator {
+public class EcosystemDiffGenerator {
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws Exception {
@@ -35,8 +35,9 @@ public class Generator {
 		
 		List<EcosystemMappingsWriter> writers = new ArrayList<>();
 		
+		DescriptionEcosystemMapper baseEcosystemMapper = new DescriptionEcosystemMapper();
 		writers.add(new EcosystemMappingsWriter(new File(outputDirectory, "reference/"), EcoSystemGenerator::determineBaseEcosystem));
-		writers.add(new EcosystemMappingsWriter(new File(outputDirectory, "candidate/"), new BaseEcosystemMapper()));
+		writers.add(new EcosystemMappingsWriter(new File(outputDirectory, "candidate/"), (d) -> baseEcosystemMapper.apply(d)));
 		
 		write(bufferedReader, writers);
 		

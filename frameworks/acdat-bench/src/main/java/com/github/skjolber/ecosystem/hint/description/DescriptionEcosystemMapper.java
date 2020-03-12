@@ -1,4 +1,4 @@
-package com.github.skjolber.ecosystem.typed;
+package com.github.skjolber.ecosystem.hint.description;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,15 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nvd.json.jackson.DefCveItem;
+import org.nvd.json.jackson.LangString;
 import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
 import org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 
+import com.github.skjolber.ecosystem.hint.EcosystemHint;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 
-public class BaseEcosystemMapper implements Function<String, String> {
+public class DescriptionEcosystemMapper implements Function<DefCveItem, String> {
 
 	// static fields for thread-safe + hardcoded functionality
 	protected static final String[] ecosystems;
@@ -25,7 +29,7 @@ public class BaseEcosystemMapper implements Function<String, String> {
 	static {
 		
 		FileExtensionHint[] fileExtensionHints = FileExtensionHint.values();
-		KeywordHint[] keywordHints = KeywordHint.values();
+		DescriptionKeywordHint[] keywordHints = DescriptionKeywordHint.values();
 
 		filesExtensionHintsCount = fileExtensionHints.length;
 
@@ -54,7 +58,7 @@ public class BaseEcosystemMapper implements Function<String, String> {
 	protected final int[] values;
 	protected final AhoCorasickDoubleArrayTrie<Integer> ahoCorasickDoubleArrayTrie;
 
-	public BaseEcosystemMapper() {
+	public DescriptionEcosystemMapper() {
 		values = new int[ecosystems.length];
 		ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();
 	}
@@ -86,6 +90,22 @@ public class BaseEcosystemMapper implements Function<String, String> {
         AhoCorasickDoubleArrayTrie<Integer> exact = new AhoCorasickDoubleArrayTrie<>();
         exact.build(exactMap);
 		return exact;
+	}
+	
+	public String apply(DefCveItem cve) {
+		String description = null;
+		List<LangString> descriptionData = cve.getCve().getDescription().getDescriptionData();
+		if(descriptionData.size() == 1) {
+			LangString langString = descriptionData.get(0);
+			if(langString.getLang().equals("en")) {
+				description = langString.getValue();
+			}
+		} else {
+			description = cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
+					-> "en".equals(desc.getLang())).map(d
+							-> d.getValue()).collect(Collectors.joining(" "));
+		}
+		return apply(description);
 	}
 	
 	public String apply(String multicase) {

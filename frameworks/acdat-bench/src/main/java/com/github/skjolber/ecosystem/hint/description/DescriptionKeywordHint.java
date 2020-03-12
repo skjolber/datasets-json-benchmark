@@ -1,4 +1,4 @@
-package com.github.skjolber.ecosystem.typed;
+package com.github.skjolber.ecosystem.hint.description;
 
 import org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer;
 import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
@@ -7,7 +7,10 @@ import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
 import org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer;
 
-public enum KeywordHint implements EcosystemHint {
+import com.github.skjolber.ecosystem.hint.EcosystemHint;
+import com.github.skjolber.ecosystem.hint.EcosystemHintNature;
+
+public enum DescriptionKeywordHint implements EcosystemHint {
 
 	// note: all must be lowercase
     NPM(" npm ", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
@@ -27,7 +30,7 @@ public enum KeywordHint implements EcosystemHint {
     
     private final String ecosystem;
     
-    private KeywordHint(String keyword, String ecosystem) {
+    private DescriptionKeywordHint(String keyword, String ecosystem) {
 		this.keyword = keyword;
 		this.ecosystem = ecosystem;
 	}
