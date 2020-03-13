@@ -23,6 +23,7 @@ public enum DescriptionKeywordHint implements EcosystemHint {
     WORDPRESS("wordpress", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     DRUPAL("drupal", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     JOOMLA("joomla", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
+    JOOMLA_EXCLAMATION_MARK("joomla!", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     MOODLE("moodle", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     TYPO3("typo3", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     JAVA_SE("java se", JarAnalyzer.DEPENDENCY_ECOSYSTEM);
