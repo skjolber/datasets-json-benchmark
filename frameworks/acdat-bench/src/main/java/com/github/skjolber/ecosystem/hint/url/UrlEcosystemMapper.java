@@ -6,32 +6,26 @@ import java.util.function.Function;
 import org.nvd.json.jackson.DefCveItem;
 import org.nvd.json.jackson.Reference;
 
-import com.github.skjolber.ecosystem.hint.EcosystemHint;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
 
 public class UrlEcosystemMapper implements Function<DefCveItem, String> {
 
-	protected static final EcosystemHint[] hints;
+	protected static final TreeMap<String, String> map;
 
 	static {
-		UrlHostHint[] hostHints = UrlHostHint.values();
-		UrlPathHint[] pathHints = UrlPathHint.values();
-
-		hints = new EcosystemHint[hostHints.length + pathHints.length];
-		System.arraycopy(hostHints, 0, hints, 0, hostHints.length);		
-		System.arraycopy(pathHints, 0, hints, hostHints.length, pathHints.length);
+		map = new TreeMap<String, String>();
+		for(UrlHostHint urlHostHint : UrlHostHint.values()) {
+			map.put(urlHostHint.getValue(), urlHostHint.getEcosystem());
+		}
+		for(UrlPathHint urlPathHint : UrlPathHint.values()) {
+			map.put(urlPathHint.getValue(), urlPathHint.getEcosystem());
+		}
 	}
 	
 	protected AhoCorasickDoubleArrayTrie<String> search;
 	
 	public UrlEcosystemMapper() {
-		TreeMap<String, String> map = new TreeMap<String, String>();
-
-        for(int i = 0; i < hints.length; i++) {
-            map.put(hints[i].getValue(), hints[i].getEcosystem());
-        }
-		
         search = new AhoCorasickDoubleArrayTrie<String>();
         search.build(map);
 	}

@@ -11,6 +11,7 @@ import com.github.skjolber.ecosystem.hint.EcosystemHintNature;
 
 public enum FileExtensionHint implements EcosystemHint {
 
+	// note: all must be lowercase
 	PHP(".php", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
 	PERL_PM(".pm", "perl"),
 	PERL_PL(".pl", "perl"),

@@ -1,12 +1,10 @@
 package com.github.skjolber.ecosystem.hint.description;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nvd.json.jackson.DefCveItem;
@@ -15,109 +13,122 @@ import org.owasp.dependencycheck.analyzer.CMakeAnalyzer;
 import org.owasp.dependencycheck.analyzer.ComposerLockAnalyzer;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
 
+import com.github.skjolber.ecosystem.StringAhoCorasickDoubleArrayTrie;
 import com.github.skjolber.ecosystem.hint.EcosystemHint;
-import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+import com.github.skjolber.ecosystem.hint.EcosystemHintNature;
 
 public class DescriptionEcosystemMapper implements Function<DefCveItem, String> {
 
 	// static fields for thread-safe + hardcoded functionality
 	protected static final String[] ecosystems;
-	protected static final int[] hintToEcosystemMapper;
-	protected static final int filesExtensionHintsCount;
-	protected static final EcosystemHint[] hints;
+	protected static final int[] hintIndexToEcosystemIndexLookupTable;
+	protected static final TreeMap<String, EcosystemHint> map; // thread safe for reading
+	
+	// take advantage of chars also being numbers
+	protected final boolean[] keywordPrefixes = getPrefixesFor(" -(\"'");
+	protected final boolean[] keywordPostfixes  = getPrefixesFor(" -)\"',.:;");
 
-	static {
-		
-		FileExtensionHint[] fileExtensionHints = FileExtensionHint.values();
-		DescriptionKeywordHint[] keywordHints = DescriptionKeywordHint.values();
-
-		filesExtensionHintsCount = fileExtensionHints.length;
-
-		hints = new EcosystemHint[fileExtensionHints.length + keywordHints.length];
-		System.arraycopy(fileExtensionHints, 0, hints, 0, fileExtensionHints.length);		
-		System.arraycopy(keywordHints, 0, hints, fileExtensionHints.length, keywordHints.length);
-		
-		Map<String, Integer> ecosystemScoreIndexes = new HashMap<>();
-		List<String> ecosystemList = new ArrayList<>();
-		for (EcosystemHint ecosystemHint : hints) {
-			if(!ecosystemScoreIndexes.containsKey(ecosystemHint.getEcosystem())) {
-				ecosystemScoreIndexes.put(ecosystemHint.getEcosystem(), ecosystemScoreIndexes.size());
-				
-				ecosystemList.add(ecosystemHint.getEcosystem());
+	protected static boolean[] getPrefixesFor(String str) {
+		int max = -1;
+		for(int i = 0; i < str.length(); i++) {
+			if(max < str.charAt(i)) {
+				max = str.charAt(i);
 			}
 		}
 		
-		ecosystems = ecosystemList.toArray(new String[ecosystemList.size()]);
-
-		hintToEcosystemMapper = new int[hints.length];
-		for(int i = 0; i < hints.length; i++) {
-			hintToEcosystemMapper[i] = ecosystemScoreIndexes.get(hints[i].getEcosystem());
+		boolean[] delimiters = new boolean[max + 1];
+		for(int i = 0; i < str.length(); i++) {
+			delimiters[str.charAt(i)] = true;
 		}
+		return delimiters;
+	}
+
+	static {
+		map = new TreeMap<String, EcosystemHint>();
+		
+		for(FileExtensionHint fileExtensionHint : FileExtensionHint.values()) {
+			map.put(fileExtensionHint.getValue(), fileExtensionHint);
+		}
+		for(DescriptionKeywordHint descriptionKeywordHint : DescriptionKeywordHint.values()) {
+			map.put(descriptionKeywordHint.getValue(), descriptionKeywordHint);
+		}
+		
+		Map<String, Integer> ecosystemIndexes = new HashMap<>();
+
+		hintIndexToEcosystemIndexLookupTable = new int[map.size()];
+		
+		int index = 0;
+		for (Entry<String, EcosystemHint> entry : map.entrySet()) {
+			EcosystemHint ecosystemHint = entry.getValue();
+			
+			Integer ecosystemIndex = ecosystemIndexes.get(ecosystemHint.getEcosystem());
+			if(ecosystemIndex == null) {
+				ecosystemIndex = ecosystemIndexes.size();
+				
+				ecosystemIndexes.put(ecosystemHint.getEcosystem(), ecosystemIndex);
+			}
+			
+			hintIndexToEcosystemIndexLookupTable[index] = ecosystemIndex;
+			
+			index++;
+		}
+		
+		ecosystems = new String[ecosystemIndexes.size()];
+		for (Entry<String, Integer> e : ecosystemIndexes.entrySet()) {
+			ecosystems[e.getValue()] = e.getKey();
+		}
+
 	}
 
 	protected final int[] values;
-	protected final AhoCorasickDoubleArrayTrie<Integer> ahoCorasickDoubleArrayTrie;
+	protected final StringAhoCorasickDoubleArrayTrie<EcosystemHint> ahoCorasickDoubleArrayTrie;
 
 	public DescriptionEcosystemMapper() {
 		values = new int[ecosystems.length];
 		ahoCorasickDoubleArrayTrie = toAhoCorasickDoubleArrayTrie();
 	}
-	
-	public EcosystemHint getHint(int i) {
-		return hints[i];
+
+	protected void increment(int i) {
+		values[hintIndexToEcosystemIndexLookupTable[i]]++;
 	}
 	
-	public void increment(int i) {
-		values[hintToEcosystemMapper[i]]++;
-	}
-	
-	public void reset() {
+	protected void reset() {
 		for(int i = 0; i < values.length; i++) {
 			values[i] = 0;
 		}
 	}
 	
-	public int getFilesExtensionCount() {
-		return filesExtensionHintsCount;
-	}
-	
-	protected static AhoCorasickDoubleArrayTrie<Integer> toAhoCorasickDoubleArrayTrie() {
-		TreeMap<String, Integer> exactMap = new TreeMap<String, Integer>();
-        for(int i = 0; i < hints.length; i++) {
-            exactMap.put(hints[i].getValue(), i);
-        }
-        // Build an AhoCorasickDoubleArrayTrie
-        AhoCorasickDoubleArrayTrie<Integer> exact = new AhoCorasickDoubleArrayTrie<>();
-        exact.build(exactMap);
+	protected static StringAhoCorasickDoubleArrayTrie<EcosystemHint> toAhoCorasickDoubleArrayTrie() {
+        StringAhoCorasickDoubleArrayTrie<EcosystemHint> exact = new StringAhoCorasickDoubleArrayTrie<>();
+        exact.build(map);
 		return exact;
 	}
 	
 	public String apply(DefCveItem cve) {
-		String description = null;
-		List<LangString> descriptionData = cve.getCve().getDescription().getDescriptionData();
-		if(descriptionData.size() == 1) {
-			LangString langString = descriptionData.get(0);
+		for (LangString langString : cve.getCve().getDescription().getDescriptionData()) {
 			if(langString.getLang().equals("en")) {
-				description = langString.getValue();
+				search(langString.getValue());
 			}
-		} else {
-			description = cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
-					-> "en".equals(desc.getLang())).map(d
-							-> d.getValue()).collect(Collectors.joining(" "));
 		}
-		return apply(description);
+		return getResult();
 	}
 	
 	public String apply(String multicase) {
+		search(multicase);
+
+		return getResult();
+	}
+
+	private void search(String multicase) {
 		String c = multicase.toLowerCase();
 
-		ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value) -> {
-			if(value < filesExtensionHintsCount) {
+		ahoCorasickDoubleArrayTrie.parseText(c, (begin, end, value, index) -> {
+			if(value.getNature() == EcosystemHintNature.FILE_EXTENSION) {
 				if(!isExtension(multicase, begin, end)) {
 					return;
 				}
 				
-				String ecosystem = getEcosystem(value);
+				String ecosystem = value.getEcosystem();
 				// real extension, if not part of url
 				if(ecosystem == ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM && c.regionMatches(begin, ".php", 0, 4)) {
 					if(isURL(c, begin)) {
@@ -128,18 +139,34 @@ public class DescriptionEcosystemMapper implements Function<DefCveItem, String> 
 						return;
 					}
 				}
+			} else { // keyword
 				
-			} else {
-				String ecosystem = getEcosystem(value);
+				// check if full word, i.e. typically space first and then space or dot after 
+				if(begin != 0) {
+					char startChar = c.charAt(begin - 1);
+					if(startChar >= keywordPrefixes.length || !keywordPrefixes[startChar]) {
+						return;
+					}
+				}
+				if(end != c.length()) {
+					char endChar = c.charAt(end);
+					if(endChar >= keywordPostfixes.length || !keywordPostfixes[endChar]) {
+						return;
+					}
+				}
+				
+				String ecosystem = value.getEcosystem();
 				if(ecosystem == CMakeAnalyzer.DEPENDENCY_ECOSYSTEM) { // TODO could be checked afterwards
 					if(StringUtils.contains(c, "android")) {
 						return;
 					}
 				}
 			}
-			increment(value);
+			increment(index);
 		});
+	}
 
+	private String getResult() {
 		int best = getBestScoreAndReset();
 
 		if(best != -1) {
@@ -163,11 +190,6 @@ public class DescriptionEcosystemMapper implements Function<DefCveItem, String> 
 		}
 		return best;
 	}
-
-	private String getEcosystem(Integer value) {
-		return ecosystems[hintToEcosystemMapper[value]];
-	}
-	
 
 	protected static boolean isExtension(String str, int begin, int end) {
 		if(str.length() != end && Character.isLetterOrDigit(str.charAt(end))) {
@@ -203,6 +225,8 @@ public class DescriptionEcosystemMapper implements Function<DefCveItem, String> 
 		}
 
 		return false;
-	}	
+	}
+
+	
 
 }

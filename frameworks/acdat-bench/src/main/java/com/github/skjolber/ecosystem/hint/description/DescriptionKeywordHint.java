@@ -13,12 +13,13 @@ import com.github.skjolber.ecosystem.hint.EcosystemHintNature;
 public enum DescriptionKeywordHint implements EcosystemHint {
 
 	// note: all must be lowercase
-    NPM(" npm ", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
-	NODEJS(" node.js", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
-    GRAILS(" grails ", JarAnalyzer.DEPENDENCY_ECOSYSTEM),
+    NPM("npm", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
+	NODEJS("node.js", AbstractNpmAnalyzer.NPM_DEPENDENCY_ECOSYSTEM),
+    GRAILS("grails", JarAnalyzer.DEPENDENCY_ECOSYSTEM),
     RUBY_GEM("ruby gem", RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM),
     DJANGO("django", PythonPackageAnalyzer.DEPENDENCY_ECOSYSTEM),
     BUFFER_OVERFLOW("buffer overflow", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM),
+    BUFFER_OVERFLOWS("buffer overflows", CMakeAnalyzer.DEPENDENCY_ECOSYSTEM),
     WORDPRESS("wordpress", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     DRUPAL("drupal", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
     JOOMLA("joomla", ComposerLockAnalyzer.DEPENDENCY_ECOSYSTEM),
