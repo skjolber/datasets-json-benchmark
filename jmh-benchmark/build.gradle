@@ -1,5 +1,6 @@
+// note: use the filter below to only run a subset of the benchmarks
 jmh {
-    include = ".*Json.*"
+    include = ".*Eco.*"
 }
 
 dependencies {
