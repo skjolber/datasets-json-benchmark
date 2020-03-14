@@ -3,9 +3,13 @@ package com.github.skjolber.nve.util;
 import java.util.List;
 
 import org.openjdk.jmh.annotations.Benchmark;
+import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
+import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.data.nvd.json.Description;
+import org.owasp.dependencycheck.data.nvd.json.LangString;
 
 import com.github.skjolber.bench.utils.EcoSystemGenerator;
-import com.github.skjolber.ecosystem.hint.description.DescriptionEcosystemMapper;
+import com.github.skjolber.ecosystem.DescriptionEcosystemMapper;
 
 public class EcoSystemBenchmark {
 
@@ -35,7 +39,7 @@ public class EcoSystemBenchmark {
 		List<String> content = state.getContent();
 
 		for(String multicase : content) {
-			String result = mapper.apply(multicase);
+			String result = mapper.getEcosystem(multicase);
 			if(result != null) {
 				count +=result.length();
 			}

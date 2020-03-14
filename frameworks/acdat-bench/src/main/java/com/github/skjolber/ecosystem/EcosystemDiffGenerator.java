@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.skjolber.bench.utils.EcoSystemGenerator;
-import com.github.skjolber.ecosystem.hint.description.DescriptionEcosystemMapper;
 import com.github.skjolber.nve.jackson.DescriptionGenerator;
 
 public class EcosystemDiffGenerator {
@@ -37,7 +36,7 @@ public class EcosystemDiffGenerator {
 		
 		DescriptionEcosystemMapper baseEcosystemMapper = new DescriptionEcosystemMapper();
 		writers.add(new EcosystemMappingsWriter(new File(outputDirectory, "reference/"), EcoSystemGenerator::determineBaseEcosystem));
-		writers.add(new EcosystemMappingsWriter(new File(outputDirectory, "candidate/"), (d) -> baseEcosystemMapper.apply(d)));
+		writers.add(new EcosystemMappingsWriter(new File(outputDirectory, "candidate/"), (d) -> baseEcosystemMapper.getEcosystem(d)));
 		
 		write(bufferedReader, writers);
 		
