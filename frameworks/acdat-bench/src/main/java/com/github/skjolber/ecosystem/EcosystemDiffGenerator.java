@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.owasp.dependencycheck.data.nvd.ecosystem.DescriptionEcosystemMapper;
+
 import com.github.skjolber.bench.utils.EcoSystemGenerator;
 import com.github.skjolber.nve.jackson.DescriptionGenerator;
 

@@ -3,13 +3,9 @@ package com.github.skjolber.nve.util;
 import java.util.List;
 
 import org.openjdk.jmh.annotations.Benchmark;
-import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.Description;
-import org.owasp.dependencycheck.data.nvd.json.LangString;
+import org.owasp.dependencycheck.data.nvd.ecosystem.DescriptionEcosystemMapper;
 
 import com.github.skjolber.bench.utils.EcoSystemGenerator;
-import com.github.skjolber.ecosystem.DescriptionEcosystemMapper;
 
 public class EcoSystemBenchmark {
 
